@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import httpx
 import os
 from collections import defaultdict
+from config import openwether
 
 app = FastAPI()
 
@@ -15,7 +16,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-API_KEY = "4d1943b2553231af7d58e8a46cf873f6"
+API_KEY = openwether
 
 @app.get("/")
 async def read_index():
