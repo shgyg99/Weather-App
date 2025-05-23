@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Simple Weather App</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 400px; margin: 50px auto; text-align: center; }
+  input, button { padding: 10px; margin: 5px; width: 80%; font-size: 16px; }
+  #result { margin-top: 20px; }
+  img { vertical-align: middle; }
+</style>
+</head>
+<body>
+  <h1>Simple Weather App</h1>
+  <input type="text" id="locationInput" placeholder="Enter city or zip code" />
+  <button id="getWeatherBtn">Get Weather</button>
+
+  <div id="result"></div>
+
+<script>
+  document.getElementById('getWeatherBtn').addEventListener('click', async () => {
+    const location = document.getElementById('locationInput').value.trim();
+    const resultDiv = document.getElementById('result');
+    if (!location) {
+      alert("Please enter a location!");
+      return;
+    }
+    resultDiv.innerHTML = "Loading...";
+    try {
+      const response = await fetch(`http://localhost:8000/weather?location=${encodeURIComponent(location)}`);
+      if (!response.ok) {
+        throw new Error("Location not found");
+      }
+      const data = await response.json();
+      resultDiv.innerHTML = `
+        <h2>Weather in ${data.location}</h2>
+        <p><img src="http://openweathermap.org/img/wn/${data.icon}@2x.png" alt="icon" /> ${data.weather}</p>
+        <p>Temperature: ${data.temperature} °C</p>
+      `;
+    } catch (err) {
+      resultDiv.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
+    }
+  });
+</script>
+
+</body>
+</html>
+
