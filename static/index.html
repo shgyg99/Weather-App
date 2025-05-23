@@ -1,49 +1,271 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Simple Weather App</title>
-<style>
-  body { font-family: Arial, sans-serif; max-width: 400px; margin: 50px auto; text-align: center; }
-  input, button { padding: 10px; margin: 5px; width: 80%; font-size: 16px; }
-  #result { margin-top: 20px; }
-  img { vertical-align: middle; }
-</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Weather Forecast</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .weather-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .weather-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.2);
+        }
+        
+        .search-input {
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        
+        .search-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .weather-icon {
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .forecast-icon {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .temp-display {
+            font-size: 4rem;
+            font-weight: 300;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .forecast-card {
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+        }
+        
+        .forecast-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 20px 0 rgba(31, 38, 135, 0.1);
+        }
+        
+        .forecast-section {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent);
+            margin: 1.5rem 0;
+        }
+    </style>
 </head>
-<body>
-  <h1>Simple Weather App</h1>
-  <input type="text" id="locationInput" placeholder="Enter city or zip code" />
-  <button id="getWeatherBtn">Get Weather</button>
+<body class="flex items-center justify-center p-4">
+    <div class="w-full max-w-3xl mx-auto">
+        <div class="weather-card p-6">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Weather Forecast</h1>
+                <p class="text-gray-600">Get real-time weather updates and 5-day forecast</p>
+            </div>
+            
+            <div class="flex mb-6">
+                <input 
+                    type="text" 
+                    id="locationInput" 
+                    placeholder="Enter city or zip code" 
+                    class="search-input flex-grow px-4 py-3 rounded-l-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+                />
+                <button 
+                    id="getWeatherBtn" 
+                    class="search-btn bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-r-lg transition-colors duration-300"
+                >
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            
+            <div id="result" class="text-center">
+                <div class="text-gray-500 py-12">
+                    <i class="fas fa-cloud-sun text-5xl opacity-30 mb-4"></i>
+                    <p>Enter a location to see the weather</p>
+                </div>
+            </div>
+            
+            <div id="forecastContainer" class="hidden">
+                <div class="divider"></div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">5-Day Weather Forecast</h3>
+                <div id="forecastResults" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"></div>
+            </div>
+            
+            <div class="mt-6 text-center text-sm text-gray-500">
+                <p>Powered by OpenWeatherMap</p>
+            </div>
+        </div>
+    </div>
 
-  <div id="result"></div>
+    <script>
+      document.getElementById('getWeatherBtn').addEventListener('click', async () => {
+        const location = document.getElementById('locationInput').value.trim();
+        if (!location) {
+          showError("Please enter a location!");
+          return;
+        }
 
-<script>
-  document.getElementById('getWeatherBtn').addEventListener('click', async () => {
-    const location = document.getElementById('locationInput').value.trim();
-    const resultDiv = document.getElementById('result');
-    if (!location) {
-      alert("Please enter a location!");
-      return;
-    }
-    resultDiv.innerHTML = "Loading...";
-    try {
-      const response = await fetch(`http://localhost:8000/weather?location=${encodeURIComponent(location)}`);
-      if (!response.ok) {
-        throw new Error("Location not found");
-      }
-      const data = await response.json();
-      resultDiv.innerHTML = `
-        <h2>Weather in ${data.location}</h2>
-        <p><img src="http://openweathermap.org/img/wn/${data.icon}@2x.png" alt="icon" /> ${data.weather}</p>
-        <p>Temperature: ${data.temperature} °C</p>
-      `;
-    } catch (err) {
-      resultDiv.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
-    }
-  });
-</script>
+        resultDiv.innerHTML = `<div>Loading...</div>`;
+        forecastContainer.classList.add('hidden');
 
+        try {
+          const response = await fetch(`http://localhost:8000/weather?location=${encodeURIComponent(location)}`);
+          if (!response.ok) throw new Error("Location not found.");
+
+          const data = await response.json();
+          displayCurrentWeather(data.current);
+          displayForecast(data.forecast);
+          forecastContainer.classList.remove('hidden');
+
+        } catch (err) {
+          showError(err.message);
+        }
+      });
+
+        
+        function displayCurrentWeather(data) {
+            // Convert temperature to Fahrenheit
+            const tempFahrenheit = (data.temperature_celsius * 9/5 + 32).toFixed(1);
+            
+            // Format date
+            const date = new Date(data.date_time);
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            const formattedDate = date.toLocaleDateString('en-US', options);
+            
+            resultDiv.innerHTML = `
+                <div class="weather-info">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-2">${data.location}</h2>
+                    <p class="text-gray-600 mb-6">${formattedDate}</p>
+                    
+                    <div class="flex items-center justify-center mb-6">
+                        <img src="http://openweathermap.org/img/wn/${data.icon}@4x.png" alt="Weather icon" class="weather-icon h-24 w-24 mr-4">
+                        <div class="text-left">
+                            <p class="text-xl font-medium text-gray-700 capitalize">${data.weather_description}</p>
+                            <div class="temp-display">${data.temperature_celsius}°C</div>
+                            <p class="text-gray-600">${tempFahrenheit}°F</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mt-6">
+                        <div class="bg-blue-50 p-3 rounded-lg">
+                            <p class="text-sm text-blue-600">Humidity</p>
+                            <p class="text-xl font-semibold">${data.humidity || '--'}%</p>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-lg">
+                            <p class="text-sm text-blue-600">Wind</p>
+                            <p class="text-xl font-semibold">${data.wind_speed || '--'} km/h</p>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-lg">
+                            <p class="text-sm text-blue-600">Pressure</p>
+                            <p class="text-xl font-semibold">${data.pressure || '--'} hPa</p>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-lg">
+                            <p class="text-sm text-blue-600">Visibility</p>
+                            <p class="text-xl font-semibold">${data.visibility ? (data.visibility/1000).toFixed(1) : '--'} km</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function displayForecast(forecastData) {
+            const forecastResults = document.getElementById('forecastResults');
+            forecastResults.innerHTML = '';
+            
+            // Assuming forecastData is an array of forecast items
+            forecastData.forEach(day => {
+                const date = new Date(day.date);
+                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+                const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                
+                const tempMaxC = day.temp_max;
+                const tempMinC = day.temp_min;
+                const tempMaxF = (tempMaxC * 9/5 + 32).toFixed(1);
+                const tempMinF = (tempMinC * 9/5 + 32).toFixed(1);
+                
+                forecastResults.innerHTML += `
+                    <div class="forecast-card p-3 text-center">
+                        <p class="font-medium text-gray-700">${dayName}</p>
+                        <p class="text-xs text-gray-500 mb-1">${dateStr}</p>
+                        <img src="http://openweathermap.org/img/wn/${day.icon}@2x.png" alt="Weather icon" class="forecast-icon h-10 w-10 mx-auto mb-1">
+                        <p class="text-xs text-gray-700 capitalize">${day.weather_description}</p>
+                        <div class="mt-1">
+                            <span class="text-base font-semibold text-gray-800">${tempMaxC}°</span>
+                            <span class="text-xs text-gray-500 mx-1">/</span>
+                            <span class="text-base font-semibold text-gray-500">${tempMinC}°</span>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">
+                            ${tempMaxF}°F / ${tempMinF}°F
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        function showError(message) {
+            resultDiv.innerHTML = `
+                <div class="bg-red-50 border-l-4 border-red-500 p-4">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-500"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-red-700">${message}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            forecastContainer.classList.add('hidden');
+        }
+        
+        // Allow pressing Enter key to search
+        document.getElementById('locationInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('getWeatherBtn').click();
+            }
+        });
+        
+        // References to DOM elements
+        const resultDiv = document.getElementById('result');
+        const forecastContainer = document.getElementById('forecastContainer');
+    </script>
 </body>
 </html>
-
