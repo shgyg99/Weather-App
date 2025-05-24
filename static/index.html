@@ -1,363 +1,420 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Weather Forecast</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-        
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        }
-        
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--secondary-gradient);
-            min-height: 100vh;
-            color: #2d3748;
-        }
-        
-        .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .glass-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 40px rgba(31, 38, 135, 0.15);
-        }
-        
-        .search-input {
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.9);
-        }
-        
-        .search-input:focus {
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
-            border-color: rgba(102, 126, 234, 0.5);
-        }
-        
-        .search-btn {
-            transition: all 0.3s ease;
-            background: var(--primary-gradient);
-            color: white;
-            font-weight: 500;
-        }
-        
-        .search-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
-        
-        .weather-icon {
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
-            animation: float 4s ease-in-out infinite;
-        }
-        
-        .forecast-icon {
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-        
-        .temp-display {
-            font-size: 4.5rem;
-            font-weight: 300;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1;
-        }
-        
-        .forecast-card {
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.75);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        
-        .forecast-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 8px 24px rgba(31, 38, 135, 0.1);
-        }
-        
-        .divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.2), transparent);
-            margin: 2rem 0;
-        }
-        
-        .loading-spinner {
-            width: 3.5rem;
-            height: 3.5rem;
-            border: 4px solid rgba(102, 126, 234, 0.1);
-            border-top-color: #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .metric-card {
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 12px;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-        }
-        
-        .metric-card:hover {
-            transform: translateY(-3px);
-            background: rgba(255, 255, 255, 0.9);
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.6s ease-out forwards;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .select-input {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23667eea' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 16px 12px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Weather Forecast</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --secondary-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--secondary-gradient);
+      min-height: 100vh;
+      color: #2d3748;
+    }
+    
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      flex-direction: column;
+      min-height: 90vh;
+    }
+    
+    .glass-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 40px rgba(31, 38, 135, 0.15);
+    }
+    
+    .search-input {
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .search-input:focus {
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+      border-color: rgba(102, 126, 234, 0.5);
+    }
+    
+    .search-btn {
+      transition: all 0.3s ease;
+      background: var(--primary-gradient);
+      color: white;
+      font-weight: 500;
+    }
+    
+    .search-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    
+    .weather-icon {
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+      animation: float 4s ease-in-out infinite;
+    }
+    
+    .forecast-icon {
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    .temp-display {
+      font-size: 4.5rem;
+      font-weight: 300;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1;
+    }
+    
+    .forecast-card {
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.75);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .forecast-card:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 8px 24px rgba(31, 38, 135, 0.1);
+    }
+    
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.2), transparent);
+      margin: 2rem 0;
+    }
+    
+    .loading-spinner {
+      width: 3.5rem;
+      height: 3.5rem;
+      border: 4px solid rgba(102, 126, 234, 0.1);
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .metric-card {
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    
+    .metric-card:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .select-input {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23667eea' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 16px 12px;
+    }
+
+    /* New button style */
+    #locateBtn {
+      margin-top: auto;
+      display: block;
+      width: 100%;
+      padding: 1rem 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 12px;
+      background: var(--primary-gradient);
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      user-select: none;
+    }
+    #locateBtn:hover {
+      background: #5a67d8;
+    }
+  </style>
 </head>
 <body class="flex items-center justify-center p-4 md:p-6">
-    <div class="w-full max-w-4xl mx-auto">
-        <div class="glass-card p-8">
-            <div class="text-center mb-8">
-                <h1 class="text-4xl font-bold text-gray-800 mb-3">Weather Forecast</h1>
-                <p class="text-gray-600 text-lg">Get real-time weather updates anywhere in the world</p>
-            </div>
-            
-            <!-- Search Section -->
-            <div class="flex flex-col sm:flex-row gap-2 mb-8">
-                <select id="inputType" class="select-input search-input px-4 py-3 sm:py-3 rounded-lg sm:rounded-l-lg sm:rounded-r-none border border-gray-200 focus:outline-none focus:border-blue-400 text-gray-700">
-                    <option value="" disabled selected>Select input type</option>
-                    <option value="city">City Name</option>
-                    <option value="postal">Postal Code</option>
-                    <option value="coords">Coordinates</option>
-                </select>
-                <input
-                    type="text"
-                    id="locationInput"
-                    placeholder=""
-                    class="search-input flex-grow px-4 py-3 border border-gray-200 focus:outline-none focus:border-blue-400 rounded-lg sm:rounded-none"
-                    value=""
-                />
-                <button id="searchBtn" class="search-btn px-6 py-3 rounded-lg sm:rounded-r-lg sm:rounded-l-none font-medium flex items-center justify-center gap-2">
-                    <i class="fas fa-search"></i> 
-                    <span>Search</span>
-                </button>
-            </div>
-            
-            <div id="result" class="text-center">
-                <div class="text-gray-500 py-12 fade-in">
-                    <div class="inline-block p-6 bg-white bg-opacity-50 rounded-full mb-6">
-                        <i class="fas fa-cloud-sun text-5xl text-gray-300"></i>
-                    </div>
-                    <p class="text-gray-500 text-lg">Enter a location to see the weather</p>
-                </div>
-            </div>
-            
-            <div id="forecastContainer" class="hidden fade-in">
-                <div class="divider"></div>
-                <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">5-Day Weather Forecast</h3>
-                <div id="forecastResults" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4"></div>
-            </div>
-            
-            <div class="mt-8 text-center text-sm text-gray-500">
-                <p>Powered by OpenWeatherMap</p>
-            </div>
+  <div class="w-full max-w-4xl mx-auto">
+    <div class="glass-card p-8">
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-3">Weather Forecast</h1>
+        <p class="text-gray-600 text-lg">Get real-time weather updates anywhere in the world</p>
+      </div>
+      
+      <!-- Search Section -->
+      <div class="flex flex-col sm:flex-row gap-2 mb-8">
+        <select id="inputType" class="select-input search-input px-4 py-3 sm:py-3 rounded-lg sm:rounded-l-lg sm:rounded-r-none border border-gray-200 focus:outline-none focus:border-blue-400 text-gray-700">
+          <option value="" disabled selected>Select input type</option>
+          <option value="city">City Name</option>
+          <option value="postal">Postal Code</option>
+          <option value="coords">Coordinates</option>
+        </select>
+        <input
+          type="text"
+          id="locationInput"
+          placeholder=""
+          class="search-input flex-grow px-4 py-3 border border-gray-200 focus:outline-none focus:border-blue-400 rounded-lg sm:rounded-none"
+          value=""
+        />
+        <button id="searchBtn" class="search-btn px-6 py-3 rounded-lg sm:rounded-r-lg sm:rounded-l-none font-medium flex items-center justify-center gap-2">
+          <i class="fas fa-search"></i> 
+          <span>Search</span>
+        </button>
+      </div>
+      
+      <div id="result" class="text-center">
+        <div class="text-gray-500 py-12 fade-in">
+          <div class="inline-block p-6 bg-white bg-opacity-50 rounded-full mb-6">
+            <i class="fas fa-cloud-sun text-5xl text-gray-300"></i>
+          </div>
+          <p class="text-gray-500 text-lg">Enter a location to see the weather</p>
         </div>
-    </div>
+      </div>
+      
+      <div id="forecastContainer" class="hidden fade-in">
+        <div class="divider"></div>
+        <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">5-Day Weather Forecast</h3>
+        <div id="forecastResults" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4"></div>
+      </div>
 
-    <script>
-        // DOM Elements
-        const inputType = document.getElementById('inputType');
-        const locationInput = document.getElementById('locationInput');
-        const searchBtn = document.getElementById('searchBtn');
-        const resultDiv = document.getElementById('result');
-        const forecastContainer = document.getElementById('forecastContainer');
-        const forecastResults = document.getElementById('forecastResults');
-        
-        inputType.addEventListener('change', () => {
-            switch(inputType.value) {
-                case 'city':
-                    locationInput.placeholder = "Enter city name (e.g., London)";
-                    break;
-                case 'coords':
-                    locationInput.placeholder = "Enter coordinates (lat,lon)";
-                    break;
-                case 'postal':
-                    locationInput.placeholder = "Enter postal code and country (e.g., 10001,US)";
-                    break;
-                default:
-                    locationInput.placeholder = "";
-            }
-            locationInput.value = "";
-        });
-        
-        searchBtn.addEventListener('click', fetchWeatherData);
-        locationInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') fetchWeatherData();
-        });
-        
-        async function fetchWeatherData() {
-            if (!inputType.value) {
-                showError("Please select an input type!");
-                return;
-            }
-            const location = locationInput.value.trim();
-            if (!location) {
-                showError("Please enter a location!");
-                return;
-            }
-            
-            resultDiv.innerHTML = `
-                <div class="flex flex-col items-center justify-center py-12 fade-in">
-                    <div class="loading-spinner mb-4"></div>
-                    <p class="text-gray-600">Loading weather data...</p>
-                </div>
-            `;
-            forecastContainer.classList.add('hidden');
-            
-            try {
-                // Build query param based on input type
-                let queryParam = '';
-                if(inputType.value === 'city' || inputType.value === 'place') {
-                    queryParam = `location=${encodeURIComponent(location)}`;
-                } else if(inputType.value === 'postal') {
-                    queryParam = `postal=${encodeURIComponent(location)}`;
-                } else if(inputType.value === 'coords') {
-                    queryParam = `coords=${encodeURIComponent(location)}`;
-                }
-                
-                const response = await fetch(`http://localhost:8000/weather?${queryParam}`);
-                if (!response.ok) throw new Error("Location not found or server error.");
-                const data = await response.json();
-                
-                displayCurrentWeather(data.current);
-                displayForecast(data.forecast);
-                forecastContainer.classList.remove('hidden');
-            } catch (err) {
-                showError(err.message);
-            }
+      <!-- New Button for Current Location -->
+      <button id="locateBtn" title="Get your current location and weather">📍 Get Current Location Weather</button>
+      
+      <div class="mt-8 text-center text-sm text-gray-500">
+        <p>Powered by OpenWeatherMap</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const inputType = document.getElementById('inputType');
+    const locationInput = document.getElementById('locationInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const resultDiv = document.getElementById('result');
+    const forecastContainer = document.getElementById('forecastContainer');
+    const forecastResults = document.getElementById('forecastResults');
+    const locateBtn = document.getElementById('locateBtn');
+    
+    inputType.addEventListener('change', () => {
+      switch(inputType.value) {
+        case 'city':
+          locationInput.placeholder = "Enter city name (e.g., London)";
+          break;
+        case 'coords':
+          locationInput.placeholder = "Enter coordinates (lat,lon)";
+          break;
+        case 'postal':
+          locationInput.placeholder = "Enter postal code and country (e.g., 10001,US)";
+          break;
+        default:
+          locationInput.placeholder = "";
+      }
+      locationInput.value = "";
+    });
+
+
+    searchBtn.addEventListener('click', fetchWeatherData);
+    locationInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') fetchWeatherData();
+    });
+
+    locateBtn.addEventListener('click', () => {
+      if (!navigator.geolocation) {
+        showError("Geolocation is not supported by your browser.");
+        return;
+      }
+      locateBtn.disabled = true;
+      locateBtn.textContent = "Getting location...";
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const lati = position.coords.latitude.toFixed(6);
+          const longi = position.coords.longitude.toFixed(6);
+          // Set input type to coords and fill location input automatically
+          inputType.value = 'coords';
+          locationInput.value = `${lati},${longi}`;
+          locateBtn.textContent = "📍 Get Current Location Weather";
+          locateBtn.disabled = false;
+          fetchWeatherData();
+        },
+        error => {
+          showError("Unable to retrieve your location.");
+          locateBtn.textContent = "📍 Get Current Location Weather";
+          locateBtn.disabled = false;
+        }
+      );
+    });
+    
+    async function fetchWeatherData() {
+      if (!inputType.value) {
+        showError("Please select an input type!");
+        return;
+      }
+      const location = locationInput.value.trim();
+      if (!location) {
+        showError("Please enter a location!");
+        return;
+      }
+      
+      resultDiv.innerHTML = `
+        <div class="flex flex-col items-center justify-center py-12 fade-in">
+          <div class="loading-spinner mb-4"></div>
+          <p class="text-gray-600">Loading weather data...</p>
+        </div>
+      `;
+      forecastContainer.classList.add('hidden');
+      
+      try {
+        // Build query param based on input type
+        let queryParam = '';
+        if(inputType.value === 'city' || inputType.value === 'place') {
+          queryParam = `location=${encodeURIComponent(location)}`;
+        } else if(inputType.value === 'postal') {
+          queryParam = `postal=${encodeURIComponent(location)}`;
+        } else if(inputType.value === 'coords') {
+          queryParam = `coords=${encodeURIComponent(location)}`;
         }
         
-        function displayCurrentWeather(data) {
-            const tempFahrenheit = (data.temperature_celsius * 9/5 + 32).toFixed(1);
-            const date = new Date(data.date_time);
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-            const formattedDate = date.toLocaleDateString('en-US', options);
-            
-            resultDiv.innerHTML = `
-                <div class="weather-info fade-in">
-                    <div class="mb-6">
-                        <h2 class="text-3xl font-bold text-gray-800 mb-1">${data.location}</h2>
-                        <p class="text-gray-500">${formattedDate}</p>
-                    </div>
-                    <div class="flex flex-col md:flex-row items-center justify-center gap-8 mb-8">
-                        <img src="http://openweathermap.org/img/wn/${data.icon}@4x.png" alt="Weather icon" class="weather-icon h-32 w-32">
-                        <div class="text-center md:text-left">
-                            <p class="text-xl font-medium text-gray-700 capitalize mb-2">${data.weather_description}</p>
-                            <div class="temp-display mb-1">${data.temperature_celsius}°C</div>
-                            <p class="text-gray-500 text-lg">${tempFahrenheit}°F</p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-                        <div class="metric-card p-4 text-center">
-                            <i class="fas fa-tint text-blue-400 text-xl mb-2"></i>
-                            <p class="text-sm text-gray-500">Humidity</p>
-                            <p class="text-xl font-semibold">${data.humidity || '--'}%</p>
-                        </div>
-                        <div class="metric-card p-4 text-center">
-                            <i class="fas fa-wind text-blue-400 text-xl mb-2"></i>
-                            <p class="text-sm text-gray-500">Wind</p>
-                            <p class="text-xl font-semibold">${data.wind_speed || '--'} km/h</p>
-                        </div>
-                        <div class="metric-card p-4 text-center">
-                            <i class="fas fa-tachometer-alt text-blue-400 text-xl mb-2"></i>
-                            <p class="text-sm text-gray-500">Pressure</p>
-                            <p class="text-xl font-semibold">${data.pressure || '--'} hPa</p>
-                        </div>
-                        <div class="metric-card p-4 text-center">
-                            <i class="fas fa-eye text-blue-400 text-xl mb-2"></i>
-                            <p class="text-sm text-gray-500">Visibility</p>
-                            <p class="text-xl font-semibold">${data.visibility ? (data.visibility/1000).toFixed(1) : '--'} km</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
+        const response = await fetch(`http://localhost:8000/weather?${queryParam}`);
+        if (!response.ok) throw new Error("Location not found or server error.");
+        const data = await response.json();
         
-        function displayForecast(forecastData) {
-            forecastResults.innerHTML = '';
-            forecastData.forEach(day => {
-                const date = new Date(day.date);
-                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
-                const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                const tempMaxC = day.temp_max;
-                const tempMinC = day.temp_min;
-                const tempMaxF = (tempMaxC * 9/5 + 32).toFixed(1);
-                const tempMinF = (tempMinC * 9/5 + 32).toFixed(1);
-                
-                forecastResults.innerHTML += `
-                    <div class="forecast-card p-4 text-center fade-in">
-                        <p class="font-medium text-gray-700">${dayName}</p>
-                        <p class="text-xs text-gray-500 mb-2">${dateStr}</p>
-                        <img src="http://openweathermap.org/img/wn/${day.icon}@2x.png" alt="Weather icon" class="forecast-icon h-12 w-12 mx-auto mb-2">
-                        <p class="text-sm text-gray-600 capitalize">${day.weather_description}</p>
-                        <div class="mt-3">
-                            <span class="text-lg font-semibold text-gray-800">${tempMaxC}°</span>
-                            <span class="text-sm text-gray-400 mx-1">/</span>
-                            <span class="text-lg font-semibold text-gray-400">${tempMinC}°</span>
-                        </div>
-                        <div class="text-xs text-gray-500 mt-1">
-                            ${tempMaxF}°F / ${tempMinF}°F
-                        </div>
-                    </div>
-                `;
-            });
-        }
+        displayCurrentWeather(data.current);
+        displayForecast(data.forecast);
+        forecastContainer.classList.remove('hidden');
+      } catch (err) {
+        showError(err.message);
+      }
+    }
+    
+    function displayCurrentWeather(data) {
+      const tempFahrenheit = (data.temperature_celsius * 9/5 + 32).toFixed(1);
+      const date = new Date(data.date_time);
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+      const formattedDate = date.toLocaleDateString('en-US', options);
+      
+      resultDiv.innerHTML = `
+        <div class="weather-info fade-in">
+          <div class="mb-6">
+            <h2 class="text-3xl font-bold text-gray-800 mb-1">${data.location}</h2>
+            <p class="text-gray-500">${formattedDate}</p>
+          </div>
+          <div class="flex flex-col md:flex-row items-center justify-center gap-8 mb-8">
+            <img src="http://openweathermap.org/img/wn/${data.icon}@4x.png" alt="Weather icon" class="weather-icon h-32 w-32">
+            <div class="text-center md:text-left">
+              <p class="text-xl font-medium text-gray-700 capitalize mb-2">${data.weather_description}</p>
+              <div class="temp-display mb-1">${data.temperature_celsius}°C</div>
+              <p class="text-gray-500 text-lg">${tempFahrenheit}°F</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+            <div class="metric-card p-4 text-center">
+              <i class="fas fa-tint text-blue-400 text-xl mb-2"></i>
+              <p class="text-sm text-gray-500">Humidity</p>
+              <p class="text-xl font-semibold">${data.humidity || '--'}%</p>
+            </div>
+            <div class="metric-card p-4 text-center">
+              <i class="fas fa-wind text-blue-400 text-xl mb-2"></i>
+              <p class="text-sm text-gray-500">Wind</p>
+              <p class="text-xl font-semibold">${data.wind_speed || '--'} km/h</p>
+            </div>
+            <div class="metric-card p-4 text-center">
+              <i class="fas fa-tachometer-alt text-blue-400 text-xl mb-2"></i>
+              <p class="text-sm text-gray-500">Pressure</p>
+              <p class="text-xl font-semibold">${data.pressure || '--'} hPa</p>
+            </div>
+            <div class="metric-card p-4 text-center">
+              <i class="fas fa-eye text-blue-400 text-xl mb-2"></i>
+              <p class="text-sm text-gray-500">Visibility</p>
+              <p class="text-xl font-semibold">${data.visibility ? (data.visibility/1000).toFixed(1) : '--'} km</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    function displayForecast(forecastData) {
+      forecastResults.innerHTML = '';
+      forecastData.forEach(day => {
+        const date = new Date(day.date);
+        const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+        const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const tempMaxC = day.temp_max;
+        const tempMinC = day.temp_min;
+        const tempMaxF = (tempMaxC * 9/5 + 32).toFixed(1);
+        const tempMinF = (tempMinC * 9/5 + 32).toFixed(1);
         
-        function showError(message) {
-            resultDiv.innerHTML = `
-                <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg fade-in">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0 pt-0.5">
-                            <i class="fas fa-exclamation-circle text-red-400"></i>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm text-red-700">${message}</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-            forecastContainer.classList.add('hidden');
-        }
-    </script>
+        forecastResults.innerHTML += `
+          <div class="forecast-card p-4 text-center fade-in">
+            <p class="font-medium text-gray-700">${dayName}</p>
+            <p class="text-xs text-gray-500 mb-2">${dateStr}</p>
+            <img src="http://openweathermap.org/img/wn/${day.icon}@2x.png" alt="Weather icon" class="forecast-icon h-12 w-12 mx-auto mb-2">
+            <p class="text-sm text-gray-600 capitalize">${day.weather_description}</p>
+            <div class="mt-3">
+              <span class="text-lg font-semibold text-gray-800">${tempMaxC}°</span>
+              <span class="text-sm text-gray-400 mx-1">/</span>
+              <span class="text-lg font-semibold text-gray-400">${tempMinC}°</span>
+            </div>
+            <div class="text-xs text-gray-500 mt-1">
+              ${tempMaxF}°F / ${tempMinF}°F
+            </div>
+          </div>
+        `;
+      });
+    }
+    
+    function showError(message) {
+      resultDiv.innerHTML = `
+        <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg fade-in">
+          <div class="flex items-start">
+            <div class="flex-shrink-0 pt-0.5">
+              <i class="fas fa-exclamation-circle text-red-400"></i>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-red-700">${message}</p>
+            </div>
+          </div>
+        </div>
+      `;
+      forecastContainer.classList.add('hidden');
+    }
+  </script>
 </body>
 </html>
