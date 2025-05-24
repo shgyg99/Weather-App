@@ -6,6 +6,12 @@ import os
 from collections import defaultdict
 from config import openwether
 
+
+# http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_KEY}
+
+
+
+
 app = FastAPI()
 
 app.add_middleware(
@@ -16,24 +22,49 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-API_KEY = openwether
+W_API_KEY = openwether
 
 @app.get("/")
 async def read_index():
     file_path = os.path.join("static", "index.html")
     return FileResponse(file_path)
+
 @app.get("/weather")
-async def get_weather(location: str = Query(..., description="City name or zip code")):
-    url = f"http://api.openweathermap.org/data/2.5/forecast?q={location}&appid={API_KEY}"
-    
+async def get_weather(
+    location: str = Query(None, description="City name or place name"),
+    postal: str = Query(None, description="Postal code and Country name such as 94040,us"),
+    coords: str = Query(None, description="Coordinates as lat,lon")
+):
+    if location:
+        query = f"q={location}"
+    elif postal:
+        parts = postal.split(',')
+        if len(parts) != 2:
+            raise HTTPException(status_code=400, detail="Postal must be in 'zip code, country name' format")
+        zi, con = parts
+        query = f"zip={zi},{con}"
+
+    elif coords:
+        # coords format: "lat,lon"
+        parts = coords.split(',')
+        if len(parts) != 2:
+            raise HTTPException(status_code=400, detail="Coordinates must be in 'lat,lon' format")
+        lat, lon = parts
+        query = f"lat={lat.strip()}&lon={lon.strip()}"
+        
+    else:
+        raise HTTPException(status_code=400, detail="No valid location parameter provided")
+
+    url = f"http://api.openweathermap.org/data/2.5/forecast?{query}&appid={W_API_KEY}"
+
     async with httpx.AsyncClient() as client:
         response = await client.get(url)
-    
+
     if response.status_code != 200:
         raise HTTPException(status_code=404, detail="Location not found or API error")
-    
+
     data = response.json()
-    
+
     first_forecast = data['list'][0]
     weather_info = first_forecast["weather"][0]
 
@@ -55,7 +86,7 @@ async def get_weather(location: str = Query(..., description="City name or zip c
         daily_data[date_str].append(item)
 
     forecast_list = []
-    for date_str, items in list(daily_data.items())[:5]:
+    for date_str, items in list(daily_data.items())[1:6]:
         temps = [entry['main']['temp'] for entry in items]
         temps_c = [temp - 273.15 for temp in temps]
         max_temp = round(max(temps_c), 1)
@@ -76,6 +107,7 @@ async def get_weather(location: str = Query(..., description="City name or zip c
     }
 
 
+
 @app.get("/forecast")
-async def get_forecast(location: str = Query(..., description="City name or zip code")):
+async def get_forecast(location: str = Query(..., description="City name")):
     return await get_weather(location)
