@@ -5,10 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Weather Forecast</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+   />
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-    
+
     :root {
       --primary: #3b82f6;
       --primary-light: #93c5fd;
@@ -19,14 +22,14 @@
       --gray: #94a3b8;
       --gradient: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
     }
-    
+
     body {
       font-family: 'Poppins', sans-serif;
       background-color: #f1f5f9;
       min-height: 100vh;
       color: var(--dark);
     }
-    
+
     .glass-card {
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(16px);
@@ -40,18 +43,18 @@
       min-height: 90vh;
       overflow: hidden;
     }
-    
+
     .search-input {
       transition: all 0.3s ease;
       background: rgba(255, 255, 255, 0.95);
       border: 1px solid rgba(203, 213, 225, 0.5);
     }
-    
+
     .search-input:focus {
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
       border-color: var(--primary);
     }
-    
+
     .search-btn {
       transition: all 0.3s ease;
       background: var(--gradient);
@@ -59,27 +62,27 @@
       font-weight: 500;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     }
-    
+
     .search-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 12px rgba(59, 130, 246, 0.2);
     }
-    
+
     .weather-icon {
       filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.1));
       animation: float 4s ease-in-out infinite;
     }
-    
+
     .forecast-icon {
       filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
     }
-    
+
     @keyframes float {
       0% { transform: translateY(0px); }
       50% { transform: translateY(-10px); }
       100% { transform: translateY(0px); }
     }
-    
+
     .temp-display {
       font-size: 5rem;
       font-weight: 300;
@@ -88,7 +91,7 @@
       -webkit-text-fill-color: transparent;
       line-height: 1;
     }
-    
+
     .forecast-card {
       transition: all 0.3s ease;
       background: rgba(255, 255, 255, 0.9);
@@ -96,18 +99,18 @@
       border: 1px solid rgba(226, 232, 240, 0.5);
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
     }
-    
+
     .forecast-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
     }
-    
+
     .divider {
       height: 1px;
       background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
       margin: 2rem 0;
     }
-    
+
     .loading-spinner {
       width: 3.5rem;
       height: 3.5rem;
@@ -116,11 +119,11 @@
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
-    
+
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
-    
+
     .metric-card {
       background: rgba(255, 255, 255, 0.9);
       border-radius: 14px;
@@ -128,21 +131,21 @@
       border: 1px solid rgba(226, 232, 240, 0.5);
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
     }
-    
+
     .metric-card:hover {
       transform: translateY(-3px);
       box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
     }
-    
+
     .fade-in {
       animation: fadeIn 0.6s ease-out forwards;
     }
-    
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    
+
     .select-input {
       appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%233b82f6' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
@@ -150,7 +153,7 @@
       background-position: right 0.75rem center;
       background-size: 16px 12px;
     }
-    
+
     #locateBtn {
       margin-top: auto;
       display: block;
@@ -167,12 +170,12 @@
       user-select: none;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     }
-    
+
     #locateBtn:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 12px rgba(59, 130, 246, 0.2);
     }
-    
+
     .tab-btn {
       padding: 0.75rem 1.5rem;
       font-weight: 500;
@@ -180,90 +183,297 @@
       transition: all 0.3s ease;
       color: var(--gray);
     }
-    
+
     .tab-btn.active {
       background: rgba(59, 130, 246, 0.1);
       color: var(--primary);
     }
-    
+
     .tab-btn:hover:not(.active) {
       color: var(--dark);
     }
-    
+
     .crud-card {
       background: rgba(255, 255, 255, 0.95);
       border-radius: 16px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
       border: 1px solid rgba(226, 232, 240, 0.5);
     }
-    
+
     .entry-card {
       background: rgba(255, 255, 255, 0.95);
       border-radius: 12px;
       border: 1px solid rgba(226, 232, 240, 0.5);
       transition: all 0.3s ease;
     }
-    
+
     .entry-card:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
     }
-    
+
     .btn-primary {
       background: var(--primary);
       color: white;
       transition: all 0.3s ease;
     }
-    
+
     .btn-primary:hover {
       background: var(--primary-dark);
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
     }
-    
+
     .btn-danger {
       background: #ef4444;
       color: white;
       transition: all 0.3s ease;
     }
-    
+
     .btn-danger:hover {
       background: #dc2626;
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(239, 68, 68, 0.2);
     }
-    
+
     .btn-secondary {
       background: var(--gray);
       color: white;
       transition: all 0.3s ease;
     }
-    
+
     .btn-secondary:hover {
       background: #64748b;
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(100, 116, 139, 0.2);
     }
-    
+
     .weather-bg {
       background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
     }
-    
+
     .header-gradient {
       background: var(--gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    
+
     .pulse {
       animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
-    
+
     @keyframes pulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
     }
+
+    /* Modern Map Styles */
+    .map-container {
+      position: relative;
+      margin-top: 1.5rem;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(226, 232, 240, 0.5);
+      height: 360px;
+      transition: all 0.3s ease;
+    }
+
+    .map-container:hover {
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    #map {
+      height: 100%;
+      width: 100%;
+      z-index: 10;
+    }
+
+    .map-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%;
+      z-index: 5;
+      pointer-events: none;
+      opacity: 0.3;
+    }
+
+    .map-header {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .map-header i {
+      color: var(--primary);
+    }
+
+    .custom-marker {
+      background: var(--gradient);
+      border-radius: 50%;
+      border: 2px solid white;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-marker::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 8px solid var(--primary);
+    }
+
+    .leaflet-popup-content-wrapper {
+      border-radius: 12px !important;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+      border: none !important;
+    }
+
+    .leaflet-popup-content {
+      font-family: 'Poppins', sans-serif !important;
+      font-size: 0.875rem !important;
+    }
+
+    .leaflet-control-attribution {
+      background: rgba(255, 255, 255, 0.8) !important;
+      border-radius: 4px !important;
+      font-size: 0.7rem !important;
+      padding: 2px 5px !important;
+    }
+
+    /* New styles for download section */
+    .download-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(226, 232, 240, 0.5);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .download-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .download-icon {
+      background: var(--gradient);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1rem;
+      color: white;
+      font-size: 1.2rem;
+    }
+
+    .download-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .download-description {
+      color: var(--gray);
+      font-size: 0.875rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .format-selector {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .format-selector select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid rgba(203, 213, 225, 0.5);
+      background-color: white;
+      appearance: none;
+      font-size: 0.9375rem;
+      color: var(--dark);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .format-selector select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .format-selector::after {
+      content: '\f078';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      top: 50%;
+      right: 1rem;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: var(--primary);
+    }
+
+    .download-button {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border-radius: 8px;
+      background: var(--gradient);
+      color: white;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .download-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(59, 130, 246, 0.2);
+    }
+
+    .download-button i {
+      font-size: 1rem;
+    }
   </style>
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+  />
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 </head>
 <body class="flex items-center justify-center p-4 md:p-6">
   <div class="w-full max-w-4xl mx-auto">
@@ -273,7 +483,7 @@
         <h1 class="text-4xl font-bold header-gradient mb-3">Weather Forecast</h1>
         <p class="text-gray-600 text-lg">Get real-time weather updates anywhere in the world</p>
       </div>
-      
+
       <div class="p-8">
         <!-- Search Section -->
         <div class="flex flex-col sm:flex-row gap-2 mb-8">
@@ -295,13 +505,13 @@
             <span>Search</span>
           </button>
         </div>
-        
+
         <!-- Tab Navigation -->
         <div class="flex mb-6 gap-2">
           <button id="weatherTab" class="tab-btn active">Weather Data</button>
           <button id="crudTab" class="tab-btn">Manage Data</button>
         </div>
-        
+
         <!-- Weather Content -->
         <div id="weatherContent">
           <div id="result" class="text-center">
@@ -312,14 +522,29 @@
               <p class="text-gray-500 text-lg">Enter a location to see the weather</p>
             </div>
           </div>
-          
+
           <div id="forecastContainer" class="hidden fade-in">
             <div class="divider"></div>
             <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">5-Day Weather Forecast</h3>
             <div id="forecastResults" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4"></div>
           </div>
+
+          <!-- Current Location Button -->
+          <button id="locateBtn" class="mt-8" title="Get your current location and weather">
+            <i class="fas fa-location-arrow mr-2"></i> Get Current Location Weather
+          </button>
+
+          <!-- Modern Map Container -->
+          <div class="map-container">
+            <div class="map-overlay"></div>
+            <div class="map-header">
+              <i class="fas fa-map-marked-alt"></i>
+              <span>Location Map</span>
+            </div>
+            <div id="map"></div>
         </div>
-        
+        </div>
+
         <!-- CRUD Content (hidden by default) -->
         <div id="crudContent" class="hidden">
           <div class="crud-card p-6 mb-6">
@@ -349,7 +574,6 @@
                   <option value="snow">Snow</option>
                   <option value="mist">Mist</option>
                 </select>
-                                
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
@@ -360,20 +584,41 @@
               <i class="fas fa-plus mr-2"></i> Add Weather Data
             </button>
           </div>
-          
+
           <div class="crud-card p-6">
             <h2 class="text-2xl mb-4 font-bold text-gray-800">Saved Weather Data</h2>
             <div id="weatherList" class="space-y-4"></div>
           </div>
-        </div>
-        
-        <!-- Current Location Button -->
-        <button id="locateBtn" class="mt-8" title="Get your current location and weather">
-          <i class="fas fa-location-arrow mr-2"></i> Get Current Location Weather
-        </button>
-        
-        <div class="mt-8 text-center text-sm text-gray-500">
-          <p>Powered by OpenWeatherMap</p>
+
+          <!-- Redesigned Download Section -->
+          <div class="download-card">
+            <div class="download-header">
+              <div class="download-icon">
+                <i class="fas fa-download"></i>
+              </div>
+              <h3 class="download-title">Export Weather Data</h3>
+            </div>
+            <p class="download-description">
+              Download your saved weather data in various formats for analysis or sharing.
+            </p>
+            <div class="format-selector">
+              <select id="downloadFormat">
+                <option value="json">JSON Format</option>
+                <option value="csv">CSV Format</option>
+                <option value="pdf">PDF Format</option>
+              </select>
+            </div>
+            <button id="downloadBtn" class="download-button">
+              <i class="fas fa-file-export"></i>
+              <span>Download Data</span>
+            </button>
+          </div>
+
+          
+
+          <div class="mt-8 text-center text-sm text-gray-500">
+            <p>Powered by OpenWeatherMap</p>
+          </div>
         </div>
       </div>
     </div>
@@ -392,7 +637,7 @@
     const crudTab = document.getElementById('crudTab');
     const weatherContent = document.getElementById('weatherContent');
     const crudContent = document.getElementById('crudContent');
-    
+
     // Tab switching
     weatherTab.addEventListener('click', () => {
       weatherTab.classList.add('active');
@@ -400,14 +645,14 @@
       weatherContent.classList.remove('hidden');
       crudContent.classList.add('hidden');
     });
-    
+
     crudTab.addEventListener('click', () => {
       crudTab.classList.add('active');
       weatherTab.classList.remove('active');
       crudContent.classList.remove('hidden');
       weatherContent.classList.add('hidden');
     });
-    
+
     inputType.addEventListener('change', () => {
       switch(inputType.value) {
         case 'city':
@@ -424,12 +669,12 @@
       }
       locationInput.value = "";
     });
-    
+
     searchBtn.addEventListener('click', fetchWeatherData);
     locationInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') fetchWeatherData();
     });
-    
+
     locateBtn.addEventListener('click', () => {
       if (!navigator.geolocation) {
         showError("Geolocation is not supported by your browser.");
@@ -455,7 +700,33 @@
         }
       );
     });
-    
+    async function saveWeatherToDB(data) {
+      const payload = {
+        location: data.location,
+        temperature: data.temperature_celsius,
+        description: data.weather_description,
+        date: data.date_time.split(' ')[0],
+      };
+
+      try {
+        const res = await fetch('http://localhost:8000/weather-db', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (res.ok) {
+          showToast("Weather data saved successfully!", "success");
+          fetchWeatherEntries(); // لیست را بروز کن
+        } else {
+          showToast("Failed to save weather data.", "error");
+        }
+      } catch (error) {
+        console.error(error);
+        showToast("Error occurred while saving data.", "error");
+      }
+    }
+
     async function fetchWeatherData() {
       if (!inputType.value) {
         showError("Please select an input type!");
@@ -466,7 +737,7 @@
         showError("Please enter a location!");
         return;
       }
-      
+
       resultDiv.innerHTML = `
         <div class="flex flex-col items-center justify-center py-12 fade-in">
           <div class="loading-spinner mb-4"></div>
@@ -474,7 +745,7 @@
         </div>
       `;
       forecastContainer.classList.add('hidden');
-      
+
       try {
         // Build query param based on input type
         let queryParam = '';
@@ -485,11 +756,11 @@
         } else if(inputType.value === 'coords') {
           queryParam = `coords=${encodeURIComponent(location)}`;
         }
-        
+
         const response = await fetch(`http://localhost:8000/weather?${queryParam}`);
         if (!response.ok) throw new Error("Location not found or server error.");
         const data = await response.json();
-        
+
         displayCurrentWeather(data.current);
         displayForecast(data.forecast);
         forecastContainer.classList.remove('hidden');
@@ -497,13 +768,87 @@
         showError(err.message);
       }
     }
-    
+    let myMap = null;
+
+    function showMap(lat, lon) {
+      if (myMap) {
+        myMap.remove();
+      }
+
+      // Create map with modern styling
+      myMap = L.map('map', {
+        zoomControl: false,
+        attributionControl: false
+      }).setView([lat, lon], 13);
+
+      // Add tile layer with a modern map style
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        detectRetina: true
+      }).addTo(myMap);
+
+      // Add zoom control with better styling
+      L.control.zoom({
+        position: 'topright'
+      }).addTo(myMap);
+
+      // Add attribution
+      L.control.attribution({
+        position: 'bottomright',
+        prefix: '<a href="https://leafletjs.com/" title="A JavaScript library for interactive maps">Leaflet</a>'
+      }).addTo(myMap);
+
+      // Create custom marker icon
+      const customIcon = L.divIcon({
+        className: 'custom-marker',
+        html: '<i class="fas fa-map-pin text-white text-xs"></i>',
+        iconSize: [24, 24],
+        iconAnchor: [12, 24],
+        popupAnchor: [0, -24]
+      });
+
+      // Add marker with custom icon
+      const marker = L.marker([lat, lon], {
+        icon: customIcon,
+        riseOnHover: true
+      }).addTo(myMap);
+
+      // Add popup with modern styling
+      marker.bindPopup(`
+        <div class="font-medium text-gray-800">
+          <i class="fas fa-map-marker-alt text-blue-500 mr-1"></i>
+          <span>Selected Location</span>
+        </div>
+        <div class="text-sm text-gray-600 mt-1">
+          Latitude: ${lat}<br>
+          Longitude: ${lon}
+        </div>
+      `).openPopup();
+
+      // Add subtle animation when marker is added
+      setTimeout(() => {
+        const markerElement = marker.getElement();
+        if (markerElement) {
+          markerElement.style.transition = 'transform 0.3s ease';
+          markerElement.style.transform = 'scale(1.2)';
+          setTimeout(() => {
+            markerElement.style.transform = 'scale(1)';
+          }, 300);
+        }
+      }, 100);
+    }
+
     function displayCurrentWeather(data) {
       const tempFahrenheit = (data.temperature_celsius * 9/5 + 32).toFixed(1);
       const date = new Date(data.date_time);
       const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
       const formattedDate = date.toLocaleDateString('en-US', options);
-      
+      setTimeout(() => {
+        showMap(data.latitude, data.longitude);
+      }, 100);
+
       resultDiv.innerHTML = `
         <div class="weather-info fade-in">
           <div class="mb-6">
@@ -546,12 +891,12 @@
           </button>
         </div>
       `;
-      
+
       document.getElementById('saveWeatherBtn').addEventListener('click', () => {
         saveWeatherToDB(data);
       });
     }
-    
+
     function displayForecast(forecastData) {
       forecastResults.innerHTML = '';
       forecastData.forEach(day => {
@@ -562,7 +907,7 @@
         const tempMinC = day.temp_min;
         const tempMaxF = (tempMaxC * 9/5 + 32).toFixed(1);
         const tempMinF = (tempMinC * 9/5 + 32).toFixed(1);
-        
+
         forecastResults.innerHTML += `
           <div class="forecast-card p-4 text-center fade-in">
             <p class="font-medium text-gray-700">${dayName}</p>
@@ -581,7 +926,7 @@
         `;
       });
     }
-    
+
     function showError(message) {
       resultDiv.innerHTML = `
         <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg fade-in">
@@ -660,6 +1005,17 @@
       }
 
       addWeatherBtn.disabled = false;
+    });
+    window.addEventListener('load', async () => {
+      try {
+        await fetch('http://localhost:8000/reset-db', {
+          method: 'POST'
+        });
+        console.log("Database reset on page load.");
+        fetchWeatherEntries();
+      } catch (error) {
+        console.error("Failed to reset database:", error);
+      }
     });
 
     async function fetchWeatherEntries() {
@@ -797,7 +1153,44 @@
 
     // Initialize list on page load
     fetchWeatherEntries();
+  </script>
 
+  <script>
+    const downloadBtn = document.getElementById('downloadBtn');
+    const downloadFormat = document.getElementById('downloadFormat');
+
+    downloadBtn.addEventListener('click', async () => {
+      const format = downloadFormat.value;
+      const url = `http://localhost:8000/weather-db/download?format=${format}`;
+
+      try {
+        // Show loading state
+        downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Preparing Download...';
+        downloadBtn.disabled = true;
+
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Download failed");
+
+        const blob = await response.blob();
+        const a = document.createElement('a');
+        const urlBlob = window.URL.createObjectURL(blob);
+        a.href = urlBlob;
+        a.download = `weather_data.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(urlBlob);
+
+        // Show success message
+        showToast("Download started successfully!", "success");
+      } catch (error) {
+        showToast(error.message, "error");
+      } finally {
+        // Reset button state
+        downloadBtn.innerHTML = '<i class="fas fa-file-export"></i> <span>Download Data</span>';
+        downloadBtn.disabled = false;
+      }
+    });
   </script>
 </body>
 </html>

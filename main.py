@@ -15,9 +15,16 @@ from fastapi import Body
 from fastapi import Path
 from sqlalchemy import func
 from sqlalchemy import select
-
-
-
+from database import engine, Base
+from fastapi.responses import StreamingResponse
+import io
+import csv
+import json
+import pandas as pd
+from fastapi import HTTPException
+from fpdf import FPDF
+from database import SessionLocal
+from sqlalchemy.ext.asyncio import AsyncSession
 
 app = FastAPI()
 
@@ -31,6 +38,11 @@ app.add_middleware(
 
 W_API_KEY = openwether
 
+async def get_db() -> AsyncSession:
+    async with SessionLocal() as session:
+        yield session
+
+
 async def validate_city_name(city_name: str) -> bool:
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={W_API_KEY}"
     async with httpx.AsyncClient() as client:
@@ -39,6 +51,74 @@ async def validate_city_name(city_name: str) -> bool:
         return True
     return False
 
+@app.post("/reset-db")
+async def reset_db():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
+    return {"message": "Database reset successfully"}
+
+
+@app.get("/weather-db/download")
+async def download_data(format: str = "json", db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(WeatherEntry))
+    data = result.scalars().all()
+
+    items = [{
+        "id": d.id,
+        "location": d.location,
+        "temperature": d.temperature,
+        "description": d.description,
+        "date": d.date
+    } for d in data]
+
+    if format == "json":
+        json_str = json.dumps(items, indent=2, ensure_ascii=False)
+        buffer = io.BytesIO(json_str.encode('utf-8'))
+        return StreamingResponse(buffer, media_type="application/json",
+                                 headers={"Content-Disposition": "attachment; filename=weather.json"})
+
+    elif format == "csv":
+        buffer = io.StringIO()
+        writer = csv.DictWriter(buffer, fieldnames=items[0].keys() if items else [])
+        writer.writeheader()
+        writer.writerows(items)
+        buffer.seek(0)
+        return StreamingResponse(io.BytesIO(buffer.getvalue().encode('utf-8')),
+                                 media_type="text/csv",
+                                 headers={"Content-Disposition": "attachment; filename=weather.csv"})
+    elif format == "pdf":
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", size=12)
+
+        # هدر جدول
+        pdf.cell(40, 10, "ID", 1)
+        pdf.cell(50, 10, "Location", 1)
+        pdf.cell(30, 10, "Temp (°C)", 1)
+        pdf.cell(50, 10, "Description", 1)
+        pdf.cell(30, 10, "Date", 1)
+        pdf.ln()
+
+        # داده‌ها
+        for item in items:
+            pdf.cell(40, 10, str(item["id"]), 1)
+            pdf.cell(50, 10, item["location"], 1)
+            pdf.cell(30, 10, str(item["temperature"]), 1)
+            pdf.cell(50, 10, item["description"], 1)
+            pdf.cell(30, 10, item["date"], 1)
+            pdf.ln()
+
+        buffer = io.BytesIO(pdf.output(dest='S').encode('latin1'))
+        buffer.seek(0)
+
+        return StreamingResponse(buffer,
+                                 media_type="application/pdf",
+                                 headers={"Content-Disposition": "attachment; filename=weather.pdf"})
+
+    else:
+        raise HTTPException(status_code=400, detail="Unsupported format")
+    
 
 @app.get("/")
 async def read_index():
@@ -166,6 +246,8 @@ async def get_weather(
         "humidity": first_forecast["main"]["humidity"],
         "pressure": first_forecast["main"]["pressure"],
         "visibility": first_forecast.get("visibility", None), 
+        "latitude": data["city"]["coord"]["lat"],
+        "longitude": data["city"]["coord"]["lon"],
     }
 
     daily_data = defaultdict(list)
