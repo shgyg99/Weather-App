@@ -5,72 +5,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Weather Forecast</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
     
     :root {
-      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      --secondary-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      --primary: #3b82f6;
+      --primary-light: #93c5fd;
+      --primary-dark: #1d4ed8;
+      --secondary: #10b981;
+      --dark: #1e293b;
+      --light: #f8fafc;
+      --gray: #94a3b8;
+      --gradient: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
     }
     
     body {
       font-family: 'Poppins', sans-serif;
-      background: var(--secondary-gradient);
+      background-color: #f1f5f9;
       min-height: 100vh;
-      color: #2d3748;
+      color: var(--dark);
     }
     
     .glass-card {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border-radius: 24px;
-      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.3);
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       display: flex;
       flex-direction: column;
       min-height: 90vh;
-    }
-    
-    .glass-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 12px 40px rgba(31, 38, 135, 0.15);
+      overflow: hidden;
     }
     
     .search-input {
       transition: all 0.3s ease;
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(203, 213, 225, 0.5);
     }
     
     .search-input:focus {
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
-      border-color: rgba(102, 126, 234, 0.5);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+      border-color: var(--primary);
     }
     
     .search-btn {
       transition: all 0.3s ease;
-      background: var(--primary-gradient);
+      background: var(--gradient);
       color: white;
       font-weight: 500;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     }
     
     .search-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 6px 12px rgba(59, 130, 246, 0.2);
     }
     
     .weather-icon {
-      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.1));
       animation: float 4s ease-in-out infinite;
     }
     
     .forecast-icon {
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
     }
     
     @keyframes float {
@@ -80,9 +81,9 @@
     }
     
     .temp-display {
-      font-size: 4.5rem;
+      font-size: 5rem;
       font-weight: 300;
-      background: var(--primary-gradient);
+      background: var(--gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       line-height: 1;
@@ -90,28 +91,28 @@
     
     .forecast-card {
       transition: all 0.3s ease;
-      background: rgba(255, 255, 255, 0.75);
+      background: rgba(255, 255, 255, 0.9);
       border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(226, 232, 240, 0.5);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
     }
     
     .forecast-card:hover {
       transform: translateY(-5px);
-      background: rgba(255, 255, 255, 0.9);
-      box-shadow: 0 8px 24px rgba(31, 38, 135, 0.1);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
     }
     
     .divider {
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.2), transparent);
+      background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
       margin: 2rem 0;
     }
     
     .loading-spinner {
       width: 3.5rem;
       height: 3.5rem;
-      border: 4px solid rgba(102, 126, 234, 0.1);
-      border-top-color: #667eea;
+      border: 4px solid rgba(59, 130, 246, 0.1);
+      border-top-color: var(--primary);
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
@@ -121,15 +122,16 @@
     }
     
     .metric-card {
-      background: rgba(255, 255, 255, 0.7);
-      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 14px;
       transition: all 0.3s ease;
-      border: 1px solid rgba(255, 255, 255, 0.4);
+      border: 1px solid rgba(226, 232, 240, 0.5);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
     }
     
     .metric-card:hover {
       transform: translateY(-3px);
-      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
     }
     
     .fade-in {
@@ -143,13 +145,12 @@
     
     .select-input {
       appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23667eea' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%233b82f6' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 0.75rem center;
       background-size: 16px 12px;
     }
-
-    /* New button style */
+    
     #locateBtn {
       margin-top: auto;
       display: block;
@@ -158,67 +159,222 @@
       font-size: 1.1rem;
       font-weight: 600;
       border-radius: 12px;
-      background: var(--primary-gradient);
+      background: var(--gradient);
       color: white;
       border: none;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: all 0.3s ease;
       user-select: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     }
+    
     #locateBtn:hover {
-      background: #5a67d8;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(59, 130, 246, 0.2);
+    }
+    
+    .tab-btn {
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      color: var(--gray);
+    }
+    
+    .tab-btn.active {
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--primary);
+    }
+    
+    .tab-btn:hover:not(.active) {
+      color: var(--dark);
+    }
+    
+    .crud-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(226, 232, 240, 0.5);
+    }
+    
+    .entry-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      border: 1px solid rgba(226, 232, 240, 0.5);
+      transition: all 0.3s ease;
+    }
+    
+    .entry-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
+    }
+    
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-danger:hover {
+      background: #dc2626;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(239, 68, 68, 0.2);
+    }
+    
+    .btn-secondary {
+      background: var(--gray);
+      color: white;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+      background: #64748b;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(100, 116, 139, 0.2);
+    }
+    
+    .weather-bg {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+    }
+    
+    .header-gradient {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
   </style>
 </head>
 <body class="flex items-center justify-center p-4 md:p-6">
   <div class="w-full max-w-4xl mx-auto">
-    <div class="glass-card p-8">
-      <div class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-800 mb-3">Weather Forecast</h1>
+    <div class="glass-card overflow-hidden">
+      <!-- Header with gradient background -->
+      <div class="weather-bg py-8 px-8 text-center">
+        <h1 class="text-4xl font-bold header-gradient mb-3">Weather Forecast</h1>
         <p class="text-gray-600 text-lg">Get real-time weather updates anywhere in the world</p>
       </div>
       
-      <!-- Search Section -->
-      <div class="flex flex-col sm:flex-row gap-2 mb-8">
-        <select id="inputType" class="select-input search-input px-4 py-3 sm:py-3 rounded-lg sm:rounded-l-lg sm:rounded-r-none border border-gray-200 focus:outline-none focus:border-blue-400 text-gray-700">
-          <option value="" disabled selected>Select input type</option>
-          <option value="city">City Name</option>
-          <option value="postal">Postal Code</option>
-          <option value="coords">Coordinates</option>
-        </select>
-        <input
-          type="text"
-          id="locationInput"
-          placeholder=""
-          class="search-input flex-grow px-4 py-3 border border-gray-200 focus:outline-none focus:border-blue-400 rounded-lg sm:rounded-none"
-          value=""
-        />
-        <button id="searchBtn" class="search-btn px-6 py-3 rounded-lg sm:rounded-r-lg sm:rounded-l-none font-medium flex items-center justify-center gap-2">
-          <i class="fas fa-search"></i> 
-          <span>Search</span>
-        </button>
-      </div>
-      
-      <div id="result" class="text-center">
-        <div class="text-gray-500 py-12 fade-in">
-          <div class="inline-block p-6 bg-white bg-opacity-50 rounded-full mb-6">
-            <i class="fas fa-cloud-sun text-5xl text-gray-300"></i>
-          </div>
-          <p class="text-gray-500 text-lg">Enter a location to see the weather</p>
+      <div class="p-8">
+        <!-- Search Section -->
+        <div class="flex flex-col sm:flex-row gap-2 mb-8">
+          <select id="inputType" class="select-input search-input px-4 py-3 sm:py-3 rounded-lg sm:rounded-l-lg sm:rounded-r-none border border-gray-200 focus:outline-none focus:border-blue-400 text-gray-700">
+            <option value="" disabled selected>Select input type</option>
+            <option value="city">City Name</option>
+            <option value="postal">Postal Code</option>
+            <option value="coords">Coordinates</option>
+          </select>
+          <input
+            type="text"
+            id="locationInput"
+            placeholder=""
+            class="search-input flex-grow px-4 py-3 border border-gray-200 focus:outline-none focus:border-blue-400 rounded-lg sm:rounded-none"
+            value=""
+          />
+          <button id="searchBtn" class="search-btn px-6 py-3 rounded-lg sm:rounded-r-lg sm:rounded-l-none font-medium flex items-center justify-center gap-2">
+            <i class="fas fa-search"></i>
+            <span>Search</span>
+          </button>
         </div>
-      </div>
-      
-      <div id="forecastContainer" class="hidden fade-in">
-        <div class="divider"></div>
-        <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">5-Day Weather Forecast</h3>
-        <div id="forecastResults" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4"></div>
-      </div>
-
-      <!-- New Button for Current Location -->
-      <button id="locateBtn" title="Get your current location and weather">📍 Get Current Location Weather</button>
-      
-      <div class="mt-8 text-center text-sm text-gray-500">
-        <p>Powered by OpenWeatherMap</p>
+        
+        <!-- Tab Navigation -->
+        <div class="flex mb-6 gap-2">
+          <button id="weatherTab" class="tab-btn active">Weather Data</button>
+          <button id="crudTab" class="tab-btn">Manage Data</button>
+        </div>
+        
+        <!-- Weather Content -->
+        <div id="weatherContent">
+          <div id="result" class="text-center">
+            <div class="text-gray-500 py-12 fade-in">
+              <div class="inline-block p-6 bg-white bg-opacity-50 rounded-full mb-6">
+                <i class="fas fa-cloud-sun text-5xl text-gray-300"></i>
+              </div>
+              <p class="text-gray-500 text-lg">Enter a location to see the weather</p>
+            </div>
+          </div>
+          
+          <div id="forecastContainer" class="hidden fade-in">
+            <div class="divider"></div>
+            <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">5-Day Weather Forecast</h3>
+            <div id="forecastResults" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4"></div>
+          </div>
+        </div>
+        
+        <!-- CRUD Content (hidden by default) -->
+        <div id="crudContent" class="hidden">
+          <div class="crud-card p-6 mb-6">
+            <h2 class="text-2xl mb-4 font-bold text-gray-800">Add Weather Data</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                <input id="locationInputCRUD" type="text" placeholder="e.g. New York" class="search-input w-full px-4 py-2 rounded-lg" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Temperature (°C)</label>
+                <input id="tempInputCRUD" type="number" step="0.1" placeholder="e.g. 22.5" class="search-input w-full px-4 py-2 rounded-lg" />
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <select id="descInputCRUD" class="border p-2 rounded w-full mb-3" required>
+                  <option value="" disabled selected>Select description</option>
+                  <option value="clear sky">Clear Sky</option>
+                  <option value="few clouds">Few Clouds</option>
+                  <option value="scattered clouds">Scattered Clouds</option>
+                  <option value="broken clouds">Broken Clouds</option>
+                  <option value="shower rain">Shower Rain</option>
+                  <option value="rain">Rain</option>
+                  <option value="thunderstorm">Thunderstorm</option>
+                  <option value="snow">Snow</option>
+                  <option value="mist">Mist</option>
+                </select>
+                                
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                <input id="dateInputCRUD" type="date" class="search-input w-full px-4 py-2 rounded-lg" />
+              </div>
+            </div>
+            <button id="addWeatherBtn" class="btn-primary px-6 py-2 rounded-lg font-medium">
+              <i class="fas fa-plus mr-2"></i> Add Weather Data
+            </button>
+          </div>
+          
+          <div class="crud-card p-6">
+            <h2 class="text-2xl mb-4 font-bold text-gray-800">Saved Weather Data</h2>
+            <div id="weatherList" class="space-y-4"></div>
+          </div>
+        </div>
+        
+        <!-- Current Location Button -->
+        <button id="locateBtn" class="mt-8" title="Get your current location and weather">
+          <i class="fas fa-location-arrow mr-2"></i> Get Current Location Weather
+        </button>
+        
+        <div class="mt-8 text-center text-sm text-gray-500">
+          <p>Powered by OpenWeatherMap</p>
+        </div>
       </div>
     </div>
   </div>
@@ -232,6 +388,25 @@
     const forecastContainer = document.getElementById('forecastContainer');
     const forecastResults = document.getElementById('forecastResults');
     const locateBtn = document.getElementById('locateBtn');
+    const weatherTab = document.getElementById('weatherTab');
+    const crudTab = document.getElementById('crudTab');
+    const weatherContent = document.getElementById('weatherContent');
+    const crudContent = document.getElementById('crudContent');
+    
+    // Tab switching
+    weatherTab.addEventListener('click', () => {
+      weatherTab.classList.add('active');
+      crudTab.classList.remove('active');
+      weatherContent.classList.remove('hidden');
+      crudContent.classList.add('hidden');
+    });
+    
+    crudTab.addEventListener('click', () => {
+      crudTab.classList.add('active');
+      weatherTab.classList.remove('active');
+      crudContent.classList.remove('hidden');
+      weatherContent.classList.add('hidden');
+    });
     
     inputType.addEventListener('change', () => {
       switch(inputType.value) {
@@ -249,20 +424,19 @@
       }
       locationInput.value = "";
     });
-
-
+    
     searchBtn.addEventListener('click', fetchWeatherData);
     locationInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') fetchWeatherData();
     });
-
+    
     locateBtn.addEventListener('click', () => {
       if (!navigator.geolocation) {
         showError("Geolocation is not supported by your browser.");
         return;
       }
       locateBtn.disabled = true;
-      locateBtn.textContent = "Getting location...";
+      locateBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Getting location...';
       navigator.geolocation.getCurrentPosition(
         position => {
           const lati = position.coords.latitude.toFixed(6);
@@ -270,13 +444,13 @@
           // Set input type to coords and fill location input automatically
           inputType.value = 'coords';
           locationInput.value = `${lati},${longi}`;
-          locateBtn.textContent = "📍 Get Current Location Weather";
+          locateBtn.innerHTML = '<i class="fas fa-location-arrow mr-2"></i> Get Current Location Weather';
           locateBtn.disabled = false;
           fetchWeatherData();
         },
         error => {
           showError("Unable to retrieve your location.");
-          locateBtn.textContent = "📍 Get Current Location Weather";
+          locateBtn.innerHTML = '<i class="fas fa-location-arrow mr-2"></i> Get Current Location Weather';
           locateBtn.disabled = false;
         }
       );
@@ -366,8 +540,16 @@
               <p class="text-xl font-semibold">${data.visibility ? (data.visibility/1000).toFixed(1) : '--'} km</p>
             </div>
           </div>
+          <button id="saveWeatherBtn" class="mt-6 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold flex items-center justify-center gap-2 mx-auto">
+            <i class="fas fa-save"></i>
+            <span>Save this weather</span>
+          </button>
         </div>
       `;
+      
+      document.getElementById('saveWeatherBtn').addEventListener('click', () => {
+        saveWeatherToDB(data);
+      });
     }
     
     function displayForecast(forecastData) {
@@ -415,6 +597,207 @@
       `;
       forecastContainer.classList.add('hidden');
     }
+  </script>
+
+  <script>
+    const locationInputCRUD = document.getElementById('locationInputCRUD');
+    const tempInputCRUD = document.getElementById('tempInputCRUD');
+    const descInputCRUD = document.getElementById('descInputCRUD');
+    const dateInputCRUD = document.getElementById('dateInputCRUD');
+    const addWeatherBtn = document.getElementById('addWeatherBtn');
+    const weatherList = document.getElementById('weatherList');
+
+    const API_BASE = "http://localhost:8000";
+
+    let isEditing = false;
+    let editingId = null;
+
+    addWeatherBtn.addEventListener('click', async () => {
+      const location = locationInputCRUD.value.trim();
+      const temperature = parseFloat(tempInputCRUD.value);
+      const description = descInputCRUD.value.trim();
+      const date = dateInputCRUD.value;
+
+      if (!location || isNaN(temperature) || !description || !date) {
+        showToast("Please fill all fields correctly.", 'error');
+        return;
+      }
+
+      addWeatherBtn.disabled = true;
+
+      if (isEditing && editingId !== null) {
+        const res = await fetch(`${API_BASE}/weather-db/${editingId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ location, temperature, description, date }),
+        });
+
+        if (res.ok) {
+          showToast("Weather data updated successfully!", 'success');
+          isEditing = false;
+          editingId = null;
+          clearForm();
+          fetchWeatherEntries();
+          addWeatherBtn.textContent = 'Add Weather Data';
+          addWeatherBtn.innerHTML = '<i class="fas fa-plus mr-2"></i> Add Weather Data';
+        } else {
+          showToast("Update failed", 'error');
+        }
+      } else {
+        const res = await fetch(`${API_BASE}/weather-db`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ location, temperature, description, date }),
+        });
+
+        if (res.ok) {
+          showToast("Weather data added successfully!", 'success');
+          clearForm();
+          fetchWeatherEntries();
+        } else {
+          showToast("Error adding weather data", 'error');
+        }
+      }
+
+      addWeatherBtn.disabled = false;
+    });
+
+    async function fetchWeatherEntries() {
+      weatherList.innerHTML = `
+        <div class="flex justify-center py-8">
+          <div class="loading-spinner"></div>
+        </div>
+      `;
+
+      const res = await fetch(`${API_BASE}/weather-db`);
+      const data = await res.json();
+      weatherList.innerHTML = "";
+
+      if (data.length === 0) {
+        weatherList.innerHTML = `
+          <div class="text-center py-8 text-gray-500">
+            <i class="fas fa-cloud text-4xl mb-3 text-gray-300"></i>
+            <p>No weather data saved yet</p>
+          </div>
+        `;
+        return;
+      }
+
+      data.forEach((entry) => {
+        const div = document.createElement("div");
+        div.className = "entry-card p-4 mb-4";
+
+        div.innerHTML = `
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-2">
+                <i class="fas fa-map-marker-alt text-blue-400"></i>
+                <h3 class="font-medium text-gray-800">${entry.location}</h3>
+              </div>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                <div class="flex items-center gap-2">
+                  <i class="fas fa-temperature-high text-red-400"></i>
+                  <span>${entry.temperature} °C</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i class="fas fa-cloud text-gray-400"></i>
+                  <span>${entry.description}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i class="fas fa-calendar-day text-purple-400"></i>
+                  <span>${entry.date}</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="deleteEntry(${entry.id})" class="btn-danger px-3 py-1 rounded-lg text-sm">
+                <i class="fas fa-trash mr-1"></i> Delete
+              </button>
+              <button onclick="editEntry(${entry.id})" class="btn-secondary px-3 py-1 rounded-lg text-sm">
+                <i class="fas fa-edit mr-1"></i> Edit
+              </button>
+            </div>
+          </div>
+        `;
+        weatherList.appendChild(div);
+      });
+    }
+
+    async function deleteEntry(id) {
+      if (!confirm("Are you sure you want to delete this weather entry?")) return;
+
+      const deleteBtn = event.target.closest("button");
+      const originalContent = deleteBtn.innerHTML;
+      deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Deleting...';
+      deleteBtn.disabled = true;
+
+      const res = await fetch(`${API_BASE}/weather-db/${id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        showToast("Weather data deleted successfully!", "success");
+        fetchWeatherEntries();
+      } else {
+        showToast("Failed to delete weather data.", "error");
+      }
+
+      deleteBtn.innerHTML = originalContent;
+      deleteBtn.disabled = false;
+    }
+
+    function clearForm() {
+      locationInputCRUD.value = "";
+      tempInputCRUD.value = "";
+      descInputCRUD.value = "";
+      dateInputCRUD.value = "";
+    }
+
+    async function editEntry(id) {
+      const res = await fetch(`${API_BASE}/weather-db`);
+      const data = await res.json();
+      const entry = data.find((e) => e.id === id);
+
+      if (!entry) {
+        showToast("Entry not found", "error");
+        return;
+      }
+
+      locationInputCRUD.value = entry.location;
+      tempInputCRUD.value = entry.temperature;
+      descInputCRUD.value = entry.description;
+      dateInputCRUD.value = entry.date;
+
+      isEditing = true;
+      editingId = id;
+      addWeatherBtn.textContent = "Update";
+      addWeatherBtn.innerHTML = '<i class="fas fa-save mr-2"></i> Update';
+    }
+
+    function showToast(message, type) {
+      const toast = document.createElement("div");
+      toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white font-medium ${
+        type === "success" ? "bg-green-500" : "bg-red-500"
+      }`;
+      toast.innerHTML = `
+        <div class="flex items-center gap-2">
+          <i class="fas ${
+            type === "success" ? "fa-check-circle" : "fa-exclamation-circle"
+          }"></i>
+          <span>${message}</span>
+        </div>
+      `;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.add("opacity-0", "transition-opacity", "duration-300");
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Initialize list on page load
+    fetchWeatherEntries();
+
   </script>
 </body>
 </html>
