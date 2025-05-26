@@ -3,6 +3,4 @@ services:
     name: weather-app
     env: docker
     dockerfilePath: Dockerfile
-    port: 8000
-    # branch: main
-    # autoDeploy: true
+    # حذف port از اینجا
