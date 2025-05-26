@@ -771,9 +771,7 @@
     const weatherContent = document.getElementById('weatherContent');
     const crudContent = document.getElementById('crudContent');
     const leftNewsPanel = document.getElementById('leftNewsPanel');
-    const rightNewsPanel = document.getElementById('rightNewsPanel');
     const newsListLeft = document.getElementById('newsListLeft');
-    const newsListRight = document.getElementById('newsListRight');
     const downloadBtn = document.getElementById('downloadBtn');
     const downloadDropdown = document.getElementById('downloadDropdown');
     const confirmDownloadBtn = document.getElementById('confirmDownloadBtn');
@@ -968,16 +966,13 @@
         
         // Show news panels
         leftNewsPanel.classList.remove('hidden');
-        rightNewsPanel.classList.remove('hidden');
         
         // Fetch news
         fetchLocalNews(data.current.location);
-        fetchWorldNews();
       } catch (err) {
         showError(err.message);
         // Hide news panels on error
         leftNewsPanel.classList.add('hidden');
-        rightNewsPanel.classList.add('hidden');
       }
     }
     
@@ -1182,31 +1177,7 @@
       }
     }
     
-    async function fetchWorldNews() {
-      newsListRight.innerHTML = '<li class="text-gray-500">Loading world news...</li>';
-      
-      try {
-        const res = await fetch('http://localhost:8000/world-news');
-        if (!res.ok) throw new Error("Failed to load world news");
-        const articles = await res.json();
-
-        if (articles.length === 0) {
-          newsListRight.innerHTML = '<li class="text-gray-500">No world news found</li>';
-          return;
-        }
-
-        newsListRight.innerHTML = articles.slice(0, 5).map(article => `
-          <li>
-            <a href="${article.url}" target="_blank" class="hover:text-blue-500 transition-colors">
-              <i class="fas fa-globe-americas text-blue-400 mr-2"></i>
-              ${article.title}
-            </a>
-          </li>
-        `).join("");
-      } catch (error) {
-        newsListRight.innerHTML = '<li class="text-gray-500">Error loading world news</li>';
-      }
-    }
+  
   </script>
 
   <script>
