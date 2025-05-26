@@ -295,7 +295,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
       z-index: 5;
       pointer-events: none;
       opacity: 0.3;
@@ -364,55 +364,184 @@
       padding: 2px 5px !important;
     }
 
-    /* New styles for download section */
-    .download-card {
+    /* News Section Styles */
+    .news-container {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 280px;
       background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border-radius: 16px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
-      border: 1px solid rgba(226, 232, 240, 0.5);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.3);
       padding: 1.5rem;
-      margin-bottom: 1.5rem;
+      z-index: 100;
+      max-height: 80vh;
+      overflow-y: auto;
+      transition: all 0.3s ease;
     }
 
-    .download-header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 1rem;
+    .news-container.left {
+      left: 1rem;
     }
 
-    .download-icon {
-      background: var(--gradient);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 1rem;
-      color: white;
-      font-size: 1.2rem;
+    .news-container.right {
+      right: 1rem;
     }
 
-    .download-title {
+    .news-container h3 {
       font-size: 1.25rem;
       font-weight: 600;
       color: var(--dark);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .download-description {
-      color: var(--gray);
-      font-size: 0.875rem;
-      margin-bottom: 1.5rem;
+    .news-container h3 i {
+      color: var(--primary);
     }
 
-    .format-selector {
+    #newsList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #newsList li {
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+    }
+
+    #newsList li:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    #newsList a {
+      color: var(--dark);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: block;
+      font-size: 0.9375rem;
+      line-height: 1.4;
+    }
+
+    #newsList a:hover {
+      color: var(--primary);
+    }
+
+    /* Ultra Modern Download Button */
+    .download-section {
       position: relative;
-      margin-bottom: 1.5rem;
+      margin-top: 2rem;
     }
 
-    .format-selector select {
+    .download-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      overflow: hidden;
+      z-index: 1;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
+      background: var(--gradient);
+      color: white;
+      border: none;
+      cursor: pointer;
       width: 100%;
-      padding: 0.75rem 1rem;
+    }
+
+    .download-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1d4ed8 0%, #0d9488 100%);
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .download-btn:hover::before {
+      opacity: 1;
+    }
+
+    .download-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(59, 130, 246, 0.3);
+    }
+
+    .download-btn:active {
+      transform: translateY(1px);
+    }
+
+    .download-btn i {
+      margin-right: 0.75rem;
+      font-size: 1.25rem;
+    }
+
+    .download-btn .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(0);
+      animation: ripple 0.6s linear;
+      pointer-events: none;
+    }
+
+    @keyframes ripple {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    .download-dropdown {
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      width: 100%;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .download-dropdown.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .download-dropdown label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--gray);
+    }
+
+    .download-dropdown select {
+      width: 100%;
+      padding: 0.75rem;
       border-radius: 8px;
       border: 1px solid rgba(203, 213, 225, 0.5);
       background-color: white;
@@ -421,49 +550,43 @@
       color: var(--dark);
       transition: all 0.3s ease;
       cursor: pointer;
+      margin-bottom: 1rem;
     }
 
-    .format-selector select:focus {
+    .download-dropdown select:focus {
       outline: none;
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
     }
 
-    .format-selector::after {
-      content: '\f078';
-      font-family: 'Font Awesome 6 Free';
-      font-weight: 900;
+    .download-dropdown::after {
+      content: '';
       position: absolute;
-      top: 50%;
-      right: 1rem;
-      transform: translateY(-50%);
-      pointer-events: none;
-      color: var(--primary);
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 10px solid white;
     }
 
-    .download-button {
-      width: 100%;
-      padding: 0.875rem 1rem;
-      border-radius: 8px;
-      background: var(--gradient);
-      color: white;
-      font-weight: 500;
-      border: none;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .download-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(59, 130, 246, 0.2);
-    }
-
-    .download-button i {
-      font-size: 1rem;
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+      .news-container {
+        position: static;
+        transform: none;
+        width: 100%;
+        max-height: none;
+        margin-bottom: 2rem;
+      }
+      
+      .news-container.left,
+      .news-container.right {
+        left: auto;
+        right: auto;
+      }
     }
   </style>
 
@@ -476,6 +599,18 @@
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 </head>
 <body class="flex items-center justify-center p-4 md:p-6">
+  <!-- Left News Panel -->
+  <div class="news-container left hidden" id="leftNewsPanel">
+    <h3><i class="fas fa-newspaper"></i> Local News</h3>
+    <ul id="newsListLeft"></ul>
+  </div>
+
+  <!-- Right News Panel -->
+  <div class="news-container right hidden" id="rightNewsPanel">
+    <h3><i class="fas fa-globe"></i> World News</h3>
+    <ul id="newsListRight"></ul>
+  </div>
+
   <div class="w-full max-w-4xl mx-auto">
     <div class="glass-card overflow-hidden">
       <!-- Header with gradient background -->
@@ -542,7 +677,7 @@
               <span>Location Map</span>
             </div>
             <div id="map"></div>
-        </div>
+          </div>
         </div>
 
         <!-- CRUD Content (hidden by default) -->
@@ -590,37 +725,31 @@
             <div id="weatherList" class="space-y-4"></div>
           </div>
 
-          <!-- Redesigned Download Section -->
-          <div class="download-card">
-            <div class="download-header">
-              <div class="download-icon">
-                <i class="fas fa-download"></i>
+          <!-- Ultra Modern Download Section -->
+          <div class="download-section">
+            <div class="relative">
+              <button id="downloadBtn" class="download-btn">
+                <i class="fas fa-file-export"></i>
+                <span>Export Weather Data</span>
+              </button>
+              <div class="download-dropdown" id="downloadDropdown">
+                <label for="downloadFormat">Select Format</label>
+                <select id="downloadFormat">
+                  <option value="json">JSON Format</option>
+                  <option value="csv">CSV Format</option>
+                  <option value="pdf">PDF Format</option>
+                </select>
+                <button id="confirmDownloadBtn" class="search-btn px-4 py-2 rounded-lg font-medium w-full">
+                  <i class="fas fa-download mr-2"></i> Download Now
+                </button>
               </div>
-              <h3 class="download-title">Export Weather Data</h3>
             </div>
-            <p class="download-description">
-              Download your saved weather data in various formats for analysis or sharing.
-            </p>
-            <div class="format-selector">
-              <select id="downloadFormat">
-                <option value="json">JSON Format</option>
-                <option value="csv">CSV Format</option>
-                <option value="pdf">PDF Format</option>
-              </select>
-            </div>
-            <button id="downloadBtn" class="download-button">
-              <i class="fas fa-file-export"></i>
-              <span>Download Data</span>
-            </button>
           </div>
-
-          
-
-          
         </div>
+        
         <div class="mt-8 text-center text-sm text-gray-500">
-            <p>Powered by OpenWeatherMap</p>
-          </div>
+          <p>Powered by OpenWeatherMap</p>
+        </div>
       </div>
     </div>
   </div>
@@ -638,6 +767,14 @@
     const crudTab = document.getElementById('crudTab');
     const weatherContent = document.getElementById('weatherContent');
     const crudContent = document.getElementById('crudContent');
+    const leftNewsPanel = document.getElementById('leftNewsPanel');
+    const rightNewsPanel = document.getElementById('rightNewsPanel');
+    const newsListLeft = document.getElementById('newsListLeft');
+    const newsListRight = document.getElementById('newsListRight');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const downloadDropdown = document.getElementById('downloadDropdown');
+    const confirmDownloadBtn = document.getElementById('confirmDownloadBtn');
+    const downloadFormat = document.getElementById('downloadFormat');
 
     // Tab switching
     weatherTab.addEventListener('click', () => {
@@ -701,6 +838,66 @@
         }
       );
     });
+
+    // Download button interactions
+    downloadBtn.addEventListener('click', (e) => {
+      // Create ripple effect
+      const ripple = document.createElement('span');
+      ripple.classList.add('ripple');
+      ripple.style.left = `${e.clientX - e.target.getBoundingClientRect().left}px`;
+      ripple.style.top = `${e.clientY - e.target.getBoundingClientRect().top}px`;
+      downloadBtn.appendChild(ripple);
+      
+      // Remove ripple after animation
+      setTimeout(() => {
+        ripple.remove();
+      }, 600);
+      
+      // Toggle dropdown
+      downloadDropdown.classList.toggle('active');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!downloadBtn.contains(e.target) && !downloadDropdown.contains(e.target)) {
+        downloadDropdown.classList.remove('active');
+      }
+    });
+
+    confirmDownloadBtn.addEventListener('click', async () => {
+      const format = downloadFormat.value;
+      const url = `http://localhost:8000/weather-db/download?format=${format}`;
+
+      try {
+        // Show loading state
+        confirmDownloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Preparing...';
+        confirmDownloadBtn.disabled = true;
+
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Download failed");
+
+        const blob = await response.blob();
+        const a = document.createElement('a');
+        const urlBlob = window.URL.createObjectURL(blob);
+        a.href = urlBlob;
+        a.download = `weather_data.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(urlBlob);
+
+        // Show success message
+        showToast("Download started successfully!", "success");
+        downloadDropdown.classList.remove('active');
+      } catch (error) {
+        showToast(error.message, "error");
+      } finally {
+        // Reset button state
+        confirmDownloadBtn.innerHTML = '<i class="fas fa-download mr-2"></i> Download Now';
+        confirmDownloadBtn.disabled = false;
+      }
+    });
+
     async function saveWeatherToDB(data) {
       const payload = {
         location: data.location,
@@ -718,7 +915,7 @@
 
         if (res.ok) {
           showToast("Weather data saved successfully!", "success");
-          fetchWeatherEntries(); // لیست را بروز کن
+          fetchWeatherEntries();
         } else {
           showToast("Failed to save weather data.", "error");
         }
@@ -765,10 +962,22 @@
         displayCurrentWeather(data.current);
         displayForecast(data.forecast);
         forecastContainer.classList.remove('hidden');
+        
+        // Show news panels
+        leftNewsPanel.classList.remove('hidden');
+        rightNewsPanel.classList.remove('hidden');
+        
+        // Fetch news
+        fetchLocalNews(data.current.location);
+        fetchWorldNews();
       } catch (err) {
         showError(err.message);
+        // Hide news panels on error
+        leftNewsPanel.classList.add('hidden');
+        rightNewsPanel.classList.add('hidden');
       }
     }
+    
     let myMap = null;
 
     function showMap(lat, lon) {
@@ -942,6 +1151,58 @@
         </div>
       `;
       forecastContainer.classList.add('hidden');
+    }
+    
+    async function fetchLocalNews(city) {
+      newsListLeft.innerHTML = '<li class="text-gray-500">Loading local news...</li>';
+      
+      try {
+        const res = await fetch(`http://localhost:8000/local-news?city=${encodeURIComponent(city)}`);
+        if (!res.ok) throw new Error("Failed to load local news");
+        const articles = await res.json();
+
+        if (articles.length === 0) {
+          newsListLeft.innerHTML = '<li class="text-gray-500">No local news found</li>';
+          return;
+        }
+
+        newsListLeft.innerHTML = articles.slice(0, 5).map(article => `
+          <li>
+            <a href="${article.url}" target="_blank" class="hover:text-blue-500 transition-colors">
+              <i class="fas fa-newspaper text-blue-400 mr-2"></i>
+              ${article.title}
+            </a>
+          </li>
+        `).join("");
+      } catch (error) {
+        newsListLeft.innerHTML = '<li class="text-gray-500">Error loading local news</li>';
+      }
+    }
+    
+    async function fetchWorldNews() {
+      newsListRight.innerHTML = '<li class="text-gray-500">Loading world news...</li>';
+      
+      try {
+        const res = await fetch('http://localhost:8000/world-news');
+        if (!res.ok) throw new Error("Failed to load world news");
+        const articles = await res.json();
+
+        if (articles.length === 0) {
+          newsListRight.innerHTML = '<li class="text-gray-500">No world news found</li>';
+          return;
+        }
+
+        newsListRight.innerHTML = articles.slice(0, 5).map(article => `
+          <li>
+            <a href="${article.url}" target="_blank" class="hover:text-blue-500 transition-colors">
+              <i class="fas fa-globe-americas text-blue-400 mr-2"></i>
+              ${article.title}
+            </a>
+          </li>
+        `).join("");
+      } catch (error) {
+        newsListRight.innerHTML = '<li class="text-gray-500">Error loading world news</li>';
+      }
     }
   </script>
 
@@ -1154,44 +1415,6 @@
 
     // Initialize list on page load
     fetchWeatherEntries();
-  </script>
-
-  <script>
-    const downloadBtn = document.getElementById('downloadBtn');
-    const downloadFormat = document.getElementById('downloadFormat');
-
-    downloadBtn.addEventListener('click', async () => {
-      const format = downloadFormat.value;
-      const url = `http://localhost:8000/weather-db/download?format=${format}`;
-
-      try {
-        // Show loading state
-        downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Preparing Download...';
-        downloadBtn.disabled = true;
-
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Download failed");
-
-        const blob = await response.blob();
-        const a = document.createElement('a');
-        const urlBlob = window.URL.createObjectURL(blob);
-        a.href = urlBlob;
-        a.download = `weather_data.${format}`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(urlBlob);
-
-        // Show success message
-        showToast("Download started successfully!", "success");
-      } catch (error) {
-        showToast(error.message, "error");
-      } finally {
-        // Reset button state
-        downloadBtn.innerHTML = '<i class="fas fa-file-export"></i> <span>Download Data</span>';
-        downloadBtn.disabled = false;
-      }
-    });
   </script>
 </body>
 </html>

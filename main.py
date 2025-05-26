@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import httpx
 import os
 from collections import defaultdict
-from config import openwether
+from config import openwether, news
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import SessionLocal
@@ -12,19 +12,19 @@ from models import WeatherEntry
 from sqlalchemy.future import select
 from pydantic import BaseModel
 from fastapi import Body
-from fastapi import Path
-from sqlalchemy import func
 from sqlalchemy import select
 from database import engine, Base
 from fastapi.responses import StreamingResponse
 import io
 import csv
 import json
-import pandas as pd
 from fastapi import HTTPException
 from fpdf import FPDF
 from database import SessionLocal
 from sqlalchemy.ext.asyncio import AsyncSession
+import httpx
+from fastapi import FastAPI, Query, HTTPException
+
 
 app = FastAPI()
 
@@ -37,6 +37,8 @@ app.add_middleware(
 )
 
 W_API_KEY = openwether
+NEWS_API_KEY = news
+
 
 async def get_db() -> AsyncSession:
     async with SessionLocal() as session:
@@ -50,6 +52,17 @@ async def validate_city_name(city_name: str) -> bool:
     if response.status_code == 200:
         return True
     return False
+
+@app.get("/local-news")
+async def get_local_news(city: str = Query(...)):
+    url = f"https://newsapi.org/v2/everything?q={city}&apiKey={NEWS_API_KEY}&language=en&pageSize=5"
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url)
+    if response.status_code != 200:
+        raise HTTPException(status_code=500, detail="Failed to fetch news")
+    data = response.json()
+    return data["articles"]
+
 
 @app.post("/reset-db")
 async def reset_db():
