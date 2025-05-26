@@ -1,7 +1,7 @@
 
 # 🌤️ Weather App
 
-![Demo GIF](path/to/demo.gif)
+![Demo GIF](documents/app_shot.png)
 
 ---
 
@@ -144,7 +144,7 @@ Open [http://localhost:8000](http://localhost:8000) in your browser.
 ## 🎬 Demo
 
 
-![Demo GIF](path/to/demo.gif)
+![Demo GIF](documents/demogif.gif)
 
 ---
 
