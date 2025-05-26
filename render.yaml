@@ -1,6 +1,0 @@
-services:
-  - type: web
-    name: weather-app
-    env: docker
-    dockerfilePath: Dockerfile
-    # حذف port از اینجا
