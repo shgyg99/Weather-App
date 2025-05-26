@@ -105,7 +105,6 @@ async def download_data(format: str = "json", db: AsyncSession = Depends(get_db)
         pdf.add_page()
         pdf.set_font("Arial", size=12)
 
-        # هدر جدول
         pdf.cell(40, 10, "ID", 1)
         pdf.cell(50, 10, "Location", 1)
         pdf.cell(30, 10, "Temp (°C)", 1)
@@ -113,7 +112,6 @@ async def download_data(format: str = "json", db: AsyncSession = Depends(get_db)
         pdf.cell(30, 10, "Date", 1)
         pdf.ln()
 
-        # داده‌ها
         for item in items:
             pdf.cell(40, 10, str(item["id"]), 1)
             pdf.cell(50, 10, item["location"], 1)
